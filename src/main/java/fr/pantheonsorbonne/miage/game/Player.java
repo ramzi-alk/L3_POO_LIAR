@@ -8,9 +8,9 @@ import java.util.Random;
 
 public class Player {
     private String name;
-    private List<Card> hand = new ArrayList<Card>();
-    private List<List> lastPlay = new ArrayList<List>();
-
+    private List<Card> hand = new ArrayList<>();
+    private List<List> lastPlay = new ArrayList<>();
+    private Random random = new Random();
 
     public List<List> getLastPlay() {
         return lastPlay;
@@ -38,14 +38,12 @@ public class Player {
     }
     
     /**
-     * determine if the player want to say liar or not
+     * Save the last round played for strategy
      * @param currentCardPlaying the card that is currently played
      * @param playerName the name of the player that is playing
      * @param nbCardPlaying the number of card that the player is playing
-     * @return boolean of the response of the player
      */
-    public boolean isLying(String currentCardPlaying,String playerName, int nbCardPlaying){
-
+    public void addHistoricalPlay(String currentCardPlaying,String playerName, int nbCardPlaying){
         List<String> myLastPlayers = new ArrayList<>();
         List<Integer> myNbCardPlaying = new ArrayList<>();
         List<String> myCurrentCardPlaying = new ArrayList<>();
@@ -67,6 +65,20 @@ public class Player {
 
         this.lastPlay.add(myLastPlay);
 
+    }
+
+    /**
+     * determine if the player want to say liar or not
+     * @param currentCardPlaying the card that is currently played
+     * @param playerName the name of the player that is playing
+     * @param nbCardPlaying the number of card that the player is playing
+     * @return boolean of the response of the player
+     */
+    public boolean isLying(String currentCardPlaying,String playerName, int nbCardPlaying){
+
+        addHistoricalPlay(currentCardPlaying, playerName, nbCardPlaying);
+
+        // if the player plays a cards that he doesn't have
         int opt = 0;
 
         for(int i = 0; i< this.hand.size(); i++){
@@ -75,24 +87,7 @@ public class Player {
             }
         }
 
-        
-        for(int j = 0; j< this.lastPlay.size(); j++){
-            int opt2 = 0;
-            for(int i = 0; i< this.hand.size(); i++){
-                if(this.hand.get(i).getName().equals(this.lastPlay.get(j).get(0))){
-                    opt2++;
-                }
-                
-            }
-            ArrayList<Integer> nbCard = (ArrayList<Integer>) this.lastPlay.get(j).get(1);
-            int d = nbCard.get(0).intValue();
-
-            if(opt2 == 4){
-                return true;
-            }else if(opt2 - 4 > d){
-                return true;
-            }
-        }
+        isCardAlreadyPlay();
        
         String[] cardNames = Deck.getNames();
 
@@ -107,14 +102,35 @@ public class Player {
                 return true;
             }
         }
-        if(opt == 4 ){
-            return true;
-        }else if(opt - 4 > nbCardPlaying ){ 
+        if(opt == 4 || opt - 4 > nbCardPlaying ){
             return true;
         }
 
-        
+        return false;
+    }
 
+    /**
+     * determine if the player played cards that are already played
+     * 
+     * @return true if the player plays a cards that are already played false otherwise
+     */
+    public boolean isCardAlreadyPlay(){
+        // 
+        for(int j = 0; j< this.lastPlay.size(); j++){
+            int opt2 = 0;
+            for(int i = 0; i< this.hand.size(); i++){
+                if(this.hand.get(i).getName().equals(this.lastPlay.get(j).get(0))){
+                    opt2++;
+                }
+                
+            }
+            ArrayList<Integer> nbCard = (ArrayList<Integer>) this.lastPlay.get(j).get(1);
+            int d = nbCard.get(0).intValue();
+
+            if(opt2 == 4 || opt2 - 4 > d){
+                return true;
+            }
+        }
         return false;
     }
 
@@ -125,9 +141,7 @@ public class Player {
      */
     public Deque<Card> chooseCard(String card){
         Deque<Card> cards = new LinkedList<>();
-        List<String> myLastPlayers = new ArrayList<>();
-        List<Integer> myNbCardPlaying = new ArrayList<>();
-        List<String> myCurrentCardPlaying = new ArrayList<>();
+
         for (Card myCard : hand){
             if(myCard.getName().equals(card)){
                 cards.add(myCard);
@@ -135,9 +149,9 @@ public class Player {
             }
         }
         if(cards.isEmpty()){
-            Random random = new Random();
+            
 
-            int nb = random.nextInt(1,3);
+            int nb = this.random.nextInt(1,3);
 
             for(int i = 0; i < nb; i++){
                 
@@ -146,24 +160,9 @@ public class Player {
                 
             }
         }
-        List<List> myLastPlay = new ArrayList<List>();
 
-        for(Card myCard : cards){
-
-            myCurrentCardPlaying.add(myCard.getName());
-            
-        }
-        myLastPlay.add(myCurrentCardPlaying);
-
-        myNbCardPlaying.add(cards.size());
-        myLastPlay.add(myNbCardPlaying);
-
-        myLastPlayers.add(this.name);
-        myLastPlay.add(myLastPlayers);
-        
-
-        this.lastPlay.add(myLastPlay);
-        
+        addHistoricalPlay(card, this.name, cards.size());
+    
         
         hand.removeAll(cards);
         return cards;

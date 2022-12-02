@@ -32,48 +32,14 @@ public class LocalLiarGame extends LiarGameEngine {
         LiarGameEngine.game(p1,p2,p3,p4);
     }
 
-    @Override
-    protected Set<String> getInitialPlayers() {
-        return this.initialPlayers;
-    }
-
-    @Override
-    protected void giveCardsToPlayer(String playerName, Card[] hand) {
-       
-       List<Card> cards = Arrays.asList(hand);
-        this.giveCardsToPlayer(cards, playerName);
-    }
+   
 
    
 
     
+   
 
-    @Override
-    protected Card getCardOrGameOver(Collection<Card> leftOverCard, String cardProviderPlayer, String cardProviderPlayerOpponent) {
+    
 
-        if (!this.playerCards.containsKey(cardProviderPlayer) || this.playerCards.get(cardProviderPlayer).isEmpty()) {
-            this.playerCards.get(cardProviderPlayerOpponent).addAll(leftOverCard);
-            this.playerCards.remove(cardProviderPlayer);
-            return null;
-        } else {
-            return this.playerCards.get(cardProviderPlayer).poll();
-        }
-    }
-
-    @Override
-    protected void giveCardsToPlayer(Collection<Card> roundStack, String winner) {
-        List<Card> cards = new ArrayList<>();
-        cards.addAll(roundStack);
-        Collections.shuffle(cards);
-        this.playerCards.get(winner).addAll(cards);
-    }
-
-    @Override
-    protected Card getCardFromPlayer(String player) throws NoMoreCardException {
-        if (this.playerCards.get(player).isEmpty()) {
-            throw new NoMoreCardException();
-        } else {
-            return this.playerCards.get(player).poll();
-        }
-    }
+   
 }

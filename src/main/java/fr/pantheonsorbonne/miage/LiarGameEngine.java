@@ -16,7 +16,8 @@ import java.util.Set;
  * this class is a abstract version of the engine, to be used locally on through the network
  */
 public abstract class LiarGameEngine {
-
+ 
+    private Random random = new Random();
  
     public static void game(Player p1, Player p2, Player p3, Player p4){
          // make a queue with all the players
@@ -35,33 +36,55 @@ public abstract class LiarGameEngine {
            winner = gameRound(players);
                 
          }
-            
+           
             
             System.out.println(winner.getName() + " won! bye");
             System.exit(0);
     }
 
-    /**
-     * play a war game wit the provided players
-     */
-    public void play() {
-       
+    
+
+
+    protected static boolean lieGame(Deque<Card> roundDeck,Queue<Player> players, Player currentPlayer, String actualCard){
+        boolean menteur = false;
+        Deque<Card> cardsPlayed = currentPlayer.chooseCard(actualCard);
+        roundDeck.addAll(cardsPlayed);
+        for(Player pl : players){
+            if(pl != currentPlayer){
+               boolean isAlier = pl.isLying(actualCard, currentPlayer.getName(), cardsPlayed.size());
+                if (isAlier){
+                   Player theLiar = whosLying(pl, currentPlayer, cardsPlayed, actualCard);
+
+                   if(theLiar.equals(currentPlayer)){
+                     currentPlayer.getHand().addAll(roundDeck);
+                       System.out.println(currentPlayer.getName() + " is a liar");
+                       for (Player pl2 : players) {
+                        pl2.getLastPlay().clear();
+                        }
+                       roundDeck.clear();
+                       menteur = true;
+                    }else{
+                        pl.getHand().addAll(roundDeck);
+                        
+                        System.out.println(pl.getName() + " is a liar");
+
+                        for (Player pl1 : players) {
+                            pl1.getLastPlay().clear();
+                        }
+                        roundDeck.clear();
+                        menteur = true;
+                        }
+                        
+                    
+                }
+            }
+            
+        }
+
+        
+        return menteur;
     }
 
-    /**
-     * provide the list of the initial players to play the game
-     *
-     * @return
-     */
-    protected abstract Set<String> getInitialPlayers();
-
-    /**
-     * give some card to a player
-     *
-     * @param playerName the player that will receive the cards
-     * @param hand       the cards as a string (to be converted later)
-     */
-    protected abstract void giveCardsToPlayer(String playerName, Card[] hand);
 
     /**
      * play until one player runs out of cards
@@ -71,14 +94,15 @@ public abstract class LiarGameEngine {
     protected static Player gameRound(Queue<Player> players){
         Deque<Card> roundDeck = new LinkedList<>();
         Random random = new Random();
+
         int indexValeur = random.nextInt(13);
         
         String[] cardValues = Deck.getNames();
         String actualCard = cardValues[indexValeur];
         boolean menteur = false;
-        boolean isALyer = false;
+        
         Player winner = null;
-        Deque<Card> cardsPlayed;
+        
         
         while(menteur == false){
             for (Player player : players) {
@@ -90,39 +114,10 @@ public abstract class LiarGameEngine {
                     
                     
                 }else{
-                    cardsPlayed = player.chooseCard(actualCard);
-                    roundDeck.addAll(cardsPlayed);
-                    for(Player pl : players){
-                        if(pl != player){
-                           isALyer = pl.isLying(actualCard, player.getName(), cardsPlayed.size());
-                            if (isALyer == true){
-                               Player theLyer = whosLying(pl, player, cardsPlayed, actualCard);
-                               if(theLyer.equals(player)){
-                                   player.getHand().addAll(roundDeck);
-                                   System.out.println(player.getName() + " is a liar");
-                                   for (Player pl2 : players) {
-                                    pl2.getLastPlay().clear();
-                                    }
-                                   roundDeck.clear();
-                                   menteur = true;
-                                }else{
-                                    pl.getHand().addAll(roundDeck);
-                                    
-                                    System.out.println(pl.getName() + " is a liar");
-                                    for (Player pl1 : players) {
-                                        pl1.getLastPlay().clear();
-                                    }
-                                    roundDeck.clear();
-                                    menteur = true;
-                                    }
-                                    
-                                
-                            }
-                        }
-                        
-                    }
-    
                     
+                    lieGame(roundDeck, players, player, actualCard);
+    
+    
                     indexValeur = (indexValeur + 1) % 12;
                     actualCard = cardValues[indexValeur];
                 }
@@ -132,21 +127,9 @@ public abstract class LiarGameEngine {
 
         return null;
     }
-    /**
-     * Play a single round
-     *
-     * @param players             the queue containing the remaining players
-     * @param firstPlayerInRound  the first contestant in this round
-     * @param secondPlayerInRound the second contestant in this round
-     * @param thirdPlayerInRound  the third contestant in this round
-     * @param fourthPlayerInRound the fourth contestant in this round
-     * @param roundDeck           possible cards left over from previous rounds
-     * @return true if we have a winner for this round, false otherwise
-     */
+   
     
-    protected boolean playRound(Queue<String> players, String firstPlayerInRound, String secondPlayerInRound,String thirdPlayerInRound,String fourthPlayerInRound, Queue<Card> roundDeck) {
-      return true;
-    }
+   
 
     /**
      * determine who is lying
@@ -173,41 +156,7 @@ public abstract class LiarGameEngine {
             
     }
 
-    /**
-     * this method must be called when a winner is identified
-     *
-     * @param winner the final winner of the same
-     */
-    protected static void declareWinner(String winner) {
-        
-    }
+    
 
-    /**
-     * get a card from a player. If the player doesn't have a card, it will be declared loser and all the left over cards will be given to his opponent
-     *
-     * @param leftOverCard               card left over from another round
-     * @param cardProviderPlayer         the player that should give a card
-     * @param cardProviderPlayerOpponent the Opponent of this player
-     * @return a card of null if player cardProviderPlayer is gameover
-     */
-    protected abstract Card getCardOrGameOver(Collection<Card> leftOverCard, String cardProviderPlayer, String cardProviderPlayerOpponent);
-
-
-
-    /**
-     * give some card to a player
-     *
-     * @param playerName the player that will receive the cards
-     * @param cards      the cards as a collection of cards
-     */
-    protected abstract void giveCardsToPlayer(Collection<Card> cards, String playerName);
-
-    /**
-     * get a card from a player
-     *
-     * @param player the player to give card
-     * @return the card from the player
-     * @throws NoMoreCardException if the player does not have a remaining card
-     */
-    protected abstract Card getCardFromPlayer(String player) throws NoMoreCardException;
+    
 }

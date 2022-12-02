@@ -52,7 +52,7 @@ public class LiarGameNetworkEngine extends LiarGameEngine {
      *
      * @return
      */
-    @Override
+    
     protected Set<String> getInitialPlayers() {
         return this.liar.getPlayers();
     }
@@ -80,7 +80,7 @@ public class LiarGameNetworkEngine extends LiarGameEngine {
      * @param cardProviderPlayerOpponent its opponent (to receive the stack if contestantA does not have cards anymore)
      * @return the card from contestant A or null if contetant A is gameover
      */
-    @Override
+    
     protected Card getCardOrGameOver(Collection<Card> leftOverCard, String cardProviderPlayer, String cardProviderPlayerOpponent) {
 
         try {
@@ -104,7 +104,7 @@ public class LiarGameNetworkEngine extends LiarGameEngine {
      * @param roundStack a stack of card at stake
      * @param winner     the winner
      */
-    @Override
+    
     protected void giveCardsToPlayer(Collection<Card> roundStack, String winner) {
         List<Card> cards = new ArrayList<>();
         cards.addAll(roundStack);
@@ -122,7 +122,7 @@ public class LiarGameNetworkEngine extends LiarGameEngine {
      * @return a card from a player
      * @throws NoMoreCardException if player has no more card.
      */
-    @Override
+    
     protected Card getCardFromPlayer(String player) throws NoMoreCardException {
         hostFacade.sendGameCommandToPlayer(liar, player, new GameCommand("playACard"));
         GameCommand expectedCard = hostFacade.receiveGameCommand(liar);
@@ -135,13 +135,6 @@ public class LiarGameNetworkEngine extends LiarGameEngine {
         //should not happen!
         throw new RuntimeException("invalid state");
 
-    }
-
-    @Override
-    protected void giveCardsToPlayer(String playerName, Card[] hand) {
-        
-
-        
-    }
+    }   
 
 }
