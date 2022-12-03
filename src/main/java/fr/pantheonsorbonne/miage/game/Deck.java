@@ -17,6 +17,7 @@ public class Deck {
     "7", "6", "5", "4", "3", "2"};
     protected static final String[] colors = {"CARREAU", "COEUR", "TREFLE","PIC" };
     
+    private Deck(){}
     
     public static List<Card> getRandomCards(int n){
         Random random = new Random();

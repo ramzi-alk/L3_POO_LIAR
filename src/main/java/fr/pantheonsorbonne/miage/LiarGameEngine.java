@@ -113,7 +113,7 @@ public abstract class LiarGameEngine {
         Player winner = null;
         
         
-        while(menteur == false){
+        while(!menteur){
             for (Player player : players) {
                 // check if the player has cards
                 if(player.getHand().isEmpty()){
