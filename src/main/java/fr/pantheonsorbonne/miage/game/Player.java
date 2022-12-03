@@ -81,13 +81,15 @@ public class Player {
         // if the player plays a cards that he doesn't have
         int opt = 0;
 
+        boolean response = false;
+
         for(int i = 0; i< this.hand.size(); i++){
             if(this.hand.get(i).getName().equals(currentCardPlaying)){
                 opt++;
             }
         }
 
-        isCardAlreadyPlay();
+         response = isCardAlreadyPlay();
        
         String[] cardNames = Deck.getNames();
 
@@ -99,14 +101,20 @@ public class Player {
                opt3 += Collections.frequency(cardPlayedName, cardName);
             }
             if(opt3 > 4){
-                return true;
+                response = true;
             }
         }
         if(opt == 4 || opt - 4 > nbCardPlaying ){
-            return true;
+            response = true;
         }
 
-        return false;
+        int rand = random.nextInt(1,30);
+
+        if(rand == 4){
+            response = true;
+        }
+
+        return response;
     }
 
     /**

@@ -1,7 +1,9 @@
 package fr.pantheonsorbonne.miage;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
+import fr.pantheonsorbonne.miage.game.Card;
+import fr.pantheonsorbonne.miage.game.Deck;
+import fr.pantheonsorbonne.miage.game.Player;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -17,4 +19,5 @@ public class AppTest
     {
         assertTrue( true );
     }
+    
 }
