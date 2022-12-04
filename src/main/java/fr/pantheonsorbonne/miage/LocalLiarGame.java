@@ -5,7 +5,7 @@ import fr.pantheonsorbonne.miage.game.Player;
 
 
 /**
- * this class implements the war game locally
+ * this class implements the liar game locally
  */
 public class LocalLiarGame extends LiarGameEngine {
     

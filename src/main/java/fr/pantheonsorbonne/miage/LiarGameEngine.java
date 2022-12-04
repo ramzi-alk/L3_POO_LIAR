@@ -63,6 +63,7 @@ public abstract class LiarGameEngine {
                     // check whos lying
                    Player theLiar = whosLying(pl, currentPlayer, cardsPlayed, actualCard);
                 
+                   //if the liar is the current player so he takes all the cards otherwise the accuser takes the cards
                    if(theLiar.equals(currentPlayer)){
                      currentPlayer.getHand().addAll(roundDeck);
                        System.out.println(currentPlayer.getName() + " is a liar");

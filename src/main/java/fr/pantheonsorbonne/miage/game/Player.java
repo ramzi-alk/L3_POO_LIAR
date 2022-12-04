@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Random;
 
 public class Player {
+
     private String name;
     private List<Card> hand = new ArrayList<>();
     private List<List> lastPlay = new ArrayList<>();
@@ -37,6 +38,7 @@ public class Player {
         this.hand = hand;
     }
     
+
     /**
      * Save the last round played for strategy
      * @param currentCardPlaying the card that is currently played
@@ -44,6 +46,7 @@ public class Player {
      * @param nbCardPlaying the number of card that the player is playing
      */
     public void addHistoricalPlay(String currentCardPlaying,String playerName, int nbCardPlaying){
+        
         List<String> myLastPlayers = new ArrayList<>();
         List<Integer> myNbCardPlaying = new ArrayList<>();
         List<String> myCurrentCardPlaying = new ArrayList<>();
@@ -67,6 +70,7 @@ public class Player {
 
     }
 
+
     /**
      * determine if the player want to say liar or not
      * @param currentCardPlaying the card that is currently played
@@ -88,25 +92,13 @@ public class Player {
                 opt++;
             }
         }
-
-         response = isCardAlreadyPlay();
-       
-        String[] cardNames = Deck.getNames();
-
-        for(String cardName : cardNames){
-            int opt3 = 0;
-            for(int i = 0; i<lastPlay.size(); i++){
-                
-               ArrayList<String> cardPlayedName = (ArrayList<String>) lastPlay.get(i).get(0);
-               opt3 += Collections.frequency(cardPlayedName, cardName);
-            }
-            if(opt3 > 4){
-                response = true;
-            }
-        }
         if(opt == 4 || opt - 4 > nbCardPlaying ){
             response = true;
         }
+         response = isCardAlreadyPlay();
+       
+        response = isACardPlayedMoreThan4();
+        
 
         int rand = random.nextInt(1,30);
 
@@ -118,14 +110,37 @@ public class Player {
     }
 
     /**
+     * determine if a card is played more than 4 times
+     * @return true if the card is played more than 4 times and false if not
+     */
+    public boolean isACardPlayedMoreThan4(){
+        String[] cardNames = Deck.getNames();
+        boolean response = false;
+        for(String cardName : cardNames){
+            int opt3 = 0;
+            for(int i = 0; i<lastPlay.size(); i++){
+                
+               ArrayList<String> cardPlayedName = (ArrayList<String>) lastPlay.get(i).get(0);
+               opt3 += Collections.frequency(cardPlayedName, cardName);
+            }
+            if(opt3 > 4){
+                response = true;
+            }
+        }
+        return response;
+
+    }
+
+    /**
      * determine if the player played cards that are already played
      * 
      * @return true if the player plays a cards that are already played false otherwise
      */
     public boolean isCardAlreadyPlay(){
-        // 
+        
+        int opt2 = 0;
         for(int j = 0; j< this.lastPlay.size(); j++){
-            int opt2 = 0;
+            
             for(int i = 0; i< this.hand.size(); i++){
                 if(this.hand.get(i).getName().equals(this.lastPlay.get(j).get(0))){
                     opt2++;

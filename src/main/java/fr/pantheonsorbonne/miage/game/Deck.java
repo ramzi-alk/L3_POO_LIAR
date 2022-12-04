@@ -17,9 +17,16 @@ public class Deck {
     "7", "6", "5", "4", "3", "2"};
     protected static final String[] colors = {"CARREAU", "COEUR", "TREFLE","PIC" };
     
-    private Deck(){}
     
+    /**
+     * Create a deck of n cards
+     * @param n
+     * @return a List of cards
+     */
     public static List<Card> getRandomCards(int n){
+        if (n>52 || n<0) {
+            throw new IllegalArgumentException("n must be less or equal than 52 and greater or equal than 0");
+        }
         Random random = new Random();
         
         List<Card> hand = new ArrayList<>();
@@ -43,6 +50,7 @@ public class Deck {
         return hand;
     
     }
+
     public static String[] getNames() {
         return names;
     }
